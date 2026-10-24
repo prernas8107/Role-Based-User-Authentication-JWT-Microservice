@@ -45,6 +45,17 @@ A production-ready Full Stack (MERN) Role-Based Access Control (RBAC) and JWT Au
 
 ---
 
+## 🔑 Demo Credentials (For Evaluation & Testing)
+
+The database comes pre-configured with active accounts for instant role-based evaluation:
+
+| Role | Email | Password | Access Level & Capabilities |
+|---|---|---|---|
+| 🛡️ **Administrator** | `admin@gmail.com` | `123456` | Full Admin Control Panel, User Stats, Make/Remove Admin, Block/Unblock, Delete User |
+| 👤 **Standard User** | `user@gmail.com` | `123456` | Protected User Dashboard, Profile View (Admin Panel access restricted) |
+
+> **Note for Evaluators:** You can also register a fresh user through the `/register` page (which automatically assigns standard user privileges) to test the self-registration and role promotion workflow.
+
 ## 📂 Project Architecture
 
 ```text
