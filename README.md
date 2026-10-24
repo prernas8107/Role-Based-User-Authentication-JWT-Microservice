@@ -1,152 +1,260 @@
-# Role-Based User Authentication & JWT Microservice
+# AuthMatrix: Role-Based User Authentication & JWT Microservice
 
-A production-ready Full Stack (MERN) Role-Based Access Control (RBAC) and JWT Authentication microservice built for the **Arrowstack Full Stack Development Internship (Task 1)**.
-
-![Status](https://img.shields.io/badge/Status-Completed-success)
-![MERN](https://img.shields.io/badge/Stack-MERN-blue)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v3.4-38bdf8)
-![Security](https://img.shields.io/badge/Auth-JWT%20%2B%20Bcrypt-orange)
+> **Mandatory Task 1:** Full Stack Role-Based Access Control (RBAC) & Secure JWT Authentication System  
+> **Developed for:** Arrowstack Full Stack Web Development Internship (2026 Batch)  
+> **Author:** Prerna Saini ([@prernas8107](https://github.com/prernas8107))  
+> **Repository:** [https://github.com/prernas8107/Role-Based-User-Authentication-JWT-Microservice](https://github.com/prernas8107/Role-Based-User-Authentication-JWT-Microservice)
 
 ---
 
-## 📌 Features
-
-### 🔐 Authentication & Security
-- **User Registration & Login**: Validated inputs with encrypted passwords using `bcryptjs` (salt rounds: 10).
-- **JWT Authentication**: Generates cryptographically signed JSON Web Tokens (`jsonwebtoken`) on login with expiration.
-- **Automatic Token Interceptor**: Frontend Axios instance automatically injects `Authorization: Bearer <token>` into all API requests.
-- **Account Status Protection**: If an account is blocked by an Admin, login is immediately denied with `403 Forbidden`.
-
-### 👥 Role-Based Access Control (RBAC)
-- **Standard User (`user`)**:
-  - Secure personal dashboard displaying profile information and access privileges.
-  - Can only access protected user routes (`/api/auth/profile`).
-  - Restricted from accessing administrative interfaces.
-- **Administrator (`admin`)**:
-  - Full access to the **Admin Control Panel**.
-  - **Live Statistics Cards**: Total users, active users, blocked users, and admin count.
-  - **Live Search & Filter**: Real-time search by user name/email with role & status filters.
-  - **User Role Management**: Single-click **"Make Admin"** and **"Remove Admin"** actions.
-  - **Account Control**: Instantly **Block** or **Unblock** users.
-  - **User Creation & Deletion**: Add new users directly to MongoDB or permanently delete accounts.
-  - **Self-Protection**: Administrators cannot accidentally demote or delete their own active account.
+![Build Status](https://img.shields.io/badge/Build-Passing-emerald?style=for-the-badge)
+![MERN Stack](https://img.shields.io/badge/Stack-MERN-blue?style=for-the-badge&logo=react)
+![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-v3.4-38bdf8?style=for-the-badge&logo=tailwindcss)
+![JWT Auth](https://img.shields.io/badge/Auth-JWT%20%2B%20Bcrypt-purple?style=for-the-badge&logo=jsonwebtokens)
+![MongoDB](https://img.shields.io/badge/Database-MongoDB%20Atlas-47a248?style=for-the-badge&logo=mongodb)
 
 ---
 
-## 🛠️ Technology Stack
+## 📖 Executive Summary
 
-| Layer | Technology |
-|---|---|
-| **Frontend** | React 18, Vite, Tailwind CSS v3, React Router v6, Lucide Icons |
-| **Backend** | Node.js, Express.js |
-| **Database** | MongoDB Atlas (Cloud Database), Mongoose ODM |
-| **Authentication** | JSON Web Tokens (JWT), Bcrypt.js |
-| **HTTP Client** | Axios with Request Interceptors |
+**AuthMatrix** is an enterprise-grade, production-ready Full Stack authentication microservice built using the **MERN (MongoDB, Express.js, React, Node.js)** architecture. 
+
+It provides secure user registration, cryptographic password encryption, signed JWT authentication, and fine-grained **Role-Based Access Control (RBAC)** that strictly segregates **Standard Users** from **Administrators** across both the frontend client and backend API layers.
+
+The frontend is crafted using **React 18** and **Tailwind CSS**, featuring an intuitive **Light Blue, Pastel Purple, and Crisp White** design system with frosted-glass navigation, real-time search & filters, live statistics, and role management controls.
 
 ---
 
-## 🔑 Demo Credentials (For Evaluation & Testing)
+## 🔑 Quick Demo Credentials (For Evaluator Testing)
 
-The database comes pre-configured with active accounts for instant role-based evaluation:
+The MongoDB Atlas cloud database is pre-seeded with active credentials for immediate evaluation of role boundaries:
 
-| Role | Email | Password | Access Level & Capabilities |
+| Account Role | Email | Password | Allowed Access & Responsibilities |
 |---|---|---|---|
-| 🛡️ **Administrator** | `admin@gmail.com` | `123456` | Full Admin Control Panel, User Stats, Make/Remove Admin, Block/Unblock, Delete User |
-| 👤 **Standard User** | `user@gmail.com` | `123456` | Protected User Dashboard, Profile View (Admin Panel access restricted) |
+| 🛡️ **Administrator** | `admin@gmail.com` | `123456` | **Full Admin Panel Access**: Live statistics cards, real-time user search & filters, Make Admin / Remove Admin, Block / Unblock accounts, Add User modal, permanent deletion. |
+| 👤 **Standard User** | `user@gmail.com` | `123456` | **User Profile Dashboard**: View profile data and assigned permissions. Access to `/admin` is strictly blocked with automatic redirection. |
 
-> **Note for Evaluators:** You can also register a fresh user through the `/register` page (which automatically assigns standard user privileges) to test the self-registration and role promotion workflow.
+> **💡 Evaluator Tip:** You can also register a fresh user through the `/register` portal (public registration defaults to the `user` role) to test self-registration, login redirection, and promoting that account to Admin using `admin@gmail.com`.
 
-## 📂 Project Architecture
+---
+
+## ✨ Key Features & Capabilities
+
+### 1. 🛡️ Authentication & Cryptography
+* **Password Hashing**: Uses `bcryptjs` with 10 salt rounds to securely hash passwords before storing them in MongoDB. Plaintext passwords never touch the database.
+* **Stateless JWT Tokens**: Upon successful login, the server issues a signed JSON Web Token containing the user's `id` and `role`.
+* **Axios Request Interceptor**: Frontend automatically extracts the JWT from `localStorage` and attaches the `Authorization: Bearer <token>` header to all outgoing requests.
+* **Account Status Protection**: Blocked users (`status: 'blocked'`) are rejected at the login gateway (`403 Forbidden`).
+
+### 2. 👥 Role-Based Access Control (RBAC)
+* **Standard User (`user`)**:
+  * Clean personal dashboard displaying verified user details and access privileges.
+  * Restricted from administrative endpoints and UI panels.
+* **Administrator (`admin`)**:
+  * **Dedicated Admin Control Panel** (`/admin`).
+  * **4 Live Stats Cards**: Real-time counters for Total Users, Active Users, Blocked Users, and Admins.
+  * **Search & Filters**: Instant debounced search by user name or email with dual dropdown filters for Role and Status.
+  * **Role Toggle**: One-click **"Make Admin"** and **"Remove Admin"** actions.
+  * **Account Moderation**: Instantly **Block** or **Unblock** users to suspend or restore their system access.
+  * **Add New User Modal**: Create and configure new accounts directly into MongoDB.
+  * **Account Deletion**: Safely delete user records.
+  * **Self-Protection Guardrails**: Admins cannot accidentally demote or delete their own active session.
+
+### 3. 🎨 UI & UX Design System
+* **Curated Color Palette**: Crisp pure-white cards (`bg-white/95`), subtle ambient light blue and purple glowing mesh accents, and soft pastel status badges.
+* **Contextual Navigation**: Active page indicator in the navbar (`Sign In` vs `Create Account`), persistent user badges, and smooth logout flows.
+* **Fully Responsive**: Mobile, tablet, and desktop optimized layouts with Tailwind CSS.
+
+---
+
+## 🏛️ System Architecture
+
+```mermaid
+flowchart TD
+    Client["React Frontend (Vite + Tailwind CSS)"] -->|"HTTP Request + JWT Bearer"| Express["Express.js Server (Port 5000)"]
+    
+    subgraph Backend_Pipeline["Backend Security Middleware Pipeline"]
+        Express --> AuthMW["authMiddleware.js (Verify JWT Token)"]
+        AuthMW -->|"Valid Token"| RoleMW["roleMiddleware.js (Check Role: admin)"]
+        RoleMW -->|"Authorized"| Controllers["Controllers (authController / adminController)"]
+    end
+    
+    Controllers -->|"Mongoose ODM"| MongoDB[("MongoDB Atlas Cloud Database")]
+    
+    RoleMW -.->|"Unauthorized (Role Mismatch)"| Deny403["403 Forbidden: Insufficient Permissions"]
+    AuthMW -.->|"Invalid or Expired Token"| Deny401["401 Unauthorized: Access Denied"]
+```
+
+---
+
+## 📂 Repository Structure
 
 ```text
-├── client/                     # Frontend (React + Vite + Tailwind CSS)
+Role-Based-User-Authentication-JWT-Microservice/
+├── client/                               # Frontend Application
+│   ├── public/
 │   ├── src/
-│   │   ├── components/         # Navbar, ProtectedRoute
-│   │   ├── context/            # AuthContext (Global Session & State)
-│   │   ├── pages/              # Login, Register, Dashboard, AdminPanel
-│   │   ├── services/           # Axios API Client with Bearer Token Injection
-│   │   ├── App.jsx             # Route Configuration & Guards
-│   │   ├── index.css           # Tailwind CSS directives
-│   │   └── main.jsx            # Application Entry Point
+│   │   ├── components/
+│   │   │   ├── Navbar.jsx               # Navigation bar with active page indicator
+│   │   │   └── ProtectedRoute.jsx       # Route guard for authentication and roles
+│   │   ├── context/
+│   │   │   └── AuthContext.jsx          # Global authentication state and JWT storage
+│   │   ├── pages/
+│   │   │   ├── Login.jsx                # Login page with validation and role redirect
+│   │   │   ├── Register.jsx             # Public registration (default role: user)
+│   │   │   ├── Dashboard.jsx            # Standard user dashboard (profile & privileges)
+│   │   │   └── AdminPanel.jsx           # Full admin management interface
+│   │   ├── services/
+│   │   │   └── api.js                   # Axios client with automated Bearer injection
+│   │   ├── App.jsx                      # Client router and route definitions
+│   │   ├── index.css                    # Tailwind CSS directives & theme styles
+│   │   └── main.jsx                     # Vite React root
+│   ├── index.html                       # HTML template with Google Font (Plus Jakarta Sans)
 │   ├── package.json
 │   ├── tailwind.config.js
 │   └── vite.config.js
 │
-├── server/                     # Backend Microservice (Node.js + Express)
-│   ├── config/                 # Database Connection (db.js with DNS resolver)
-│   ├── controllers/            # authController.js, adminController.js
-│   ├── middleware/             # authMiddleware.js (JWT), roleMiddleware.js (RBAC)
-│   ├── models/                 # User.js (Mongoose Schema with role & status)
-│   ├── routes/                 # authRoutes.js, adminRoutes.js
-│   ├── .env.example            # Environment variables template
+├── server/                               # Backend Microservice
+│   ├── config/
+│   │   └── db.js                        # MongoDB Atlas connection with DNS fallback
+│   ├── controllers/
+│   │   ├── authController.js            # Registration, login, and user profile logic
+│   │   └── adminController.js           # Admin stats, search/filter, role & status updates
+│   ├── middleware/
+│   │   ├── authMiddleware.js            # JWT token verification
+│   │   └── roleMiddleware.js            # Role-Based Access Control gatekeeper
+│   ├── models/
+│   │   └── User.js                      # User schema with roles (user, admin) & status
+│   ├── routes/
+│   │   ├── authRoutes.js                # Public and profile route endpoints
+│   │   └── adminRoutes.js               # Protected admin route endpoints
+│   ├── .env.example                     # Environment variables template
 │   ├── package.json
-│   └── server.js               # Express Server & Route Mounting
+│   └── server.js                        # Express server entry point
 │
-├── .gitignore
-└── README.md
+├── .gitignore                           # Excludes node_modules, .env, and build artifacts
+└── README.md                            # Complete documentation & evaluator guide
 ```
 
 ---
 
-## 🚀 Getting Started
+## 📡 REST API Specification
 
-### 1. Prerequisites
-- Node.js (v18 or higher)
-- MongoDB Atlas cluster or local MongoDB instance
+### 1. Public Authentication Routes
 
-### 2. Backend Setup
-```bash
-cd server
-npm install
-```
+| HTTP Method | Route | Description | Headers | Request Body |
+|---|---|---|---|---|
+| `POST` | `/api/auth/register` | Register a new user | `Content-Type: application/json` | `{ "name": "Alice", "email": "alice@example.com", "password": "password123" }` |
+| `POST` | `/api/auth/login` | Authenticate user & get JWT | `Content-Type: application/json` | `{ "email": "alice@example.com", "password": "password123" }` |
 
-Create a `.env` file in the `server` directory (refer to `.env.example`):
-```env
-PORT=5000
-MONGO_URI=your_mongodb_atlas_connection_string
-JWT_SECRET=your_secret_jwt_key
-```
+### 2. Protected User Routes
 
-Start the backend server:
-```bash
-npm run dev
-```
-*Server runs on `http://localhost:5000`*
+| HTTP Method | Route | Description | Headers | Response |
+|---|---|---|---|---|
+| `GET` | `/api/auth/profile` | Fetch authenticated user data | `Authorization: Bearer <token>` | Returns user profile object without password |
 
-### 3. Frontend Setup
-In a new terminal:
-```bash
-cd client
-npm install
-npm run dev
-```
-*Frontend runs on `http://localhost:3000`*
+### 3. Protected Admin Routes (Requires Role: `admin`)
+
+| HTTP Method | Route | Description | Headers | Request / Query Params |
+|---|---|---|---|---|
+| `GET` | `/api/admin/stats` | Dashboard metrics | `Authorization: Bearer <token>` | None |
+| `GET` | `/api/admin/users` | List & filter users | `Authorization: Bearer <token>` | Query params: `?search=john&role=user&status=active` |
+| `POST` | `/api/admin/users` | Create user manually | `Authorization: Bearer <token>` | `{ "name": "Bob", "email": "bob@example.com", "password": "pass", "role": "admin" }` |
+| `PATCH` | `/api/admin/users/:id` | Update status or role | `Authorization: Bearer <token>` | `{ "role": "admin" }` or `{ "status": "blocked" }` |
+| `DELETE` | `/api/admin/users/:id` | Delete user permanently | `Authorization: Bearer <token>` | URL parameter: `:id` |
 
 ---
 
-## 📡 API Endpoints
+## 🚀 Local Installation & Setup Guide
 
-### Public Endpoints
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/auth/register` | Register a new user (default role: `user`, status: `active`) |
-| `POST` | `/api/auth/login` | Authenticate user & receive JWT token |
-
-### Protected User Endpoints (Requires Valid Token)
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/auth/profile` | Retrieve authenticated user's profile |
-
-### Protected Admin Endpoints (Requires Role: `admin`)
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/admin/stats` | Retrieve user count, active, blocked, and admin statistics |
-| `GET` | `/api/admin/users` | List users with optional `search`, `role`, and `status` query params |
-| `POST` | `/api/admin/users` | Create a new user account with role assignment |
-| `PATCH` | `/api/admin/users/:id` | Update user status (`active`/`blocked`) or role (`user`/`admin`) |
-| `DELETE` | `/api/admin/users/:id` | Permanently remove a user account |
+### Prerequisites
+* **Node.js** (v18.x or higher)
+* **npm** (v9.x or higher)
+* **MongoDB Atlas** cluster URI or local MongoDB daemon
 
 ---
 
-## 🛡️ License
-This project is developed as part of the Arrowstack Internship Program for educational and evaluation purposes.
+### Step 1: Clone the Repository
+```bash
+git clone https://github.com/prernas8107/Role-Based-User-Authentication-JWT-Microservice.git
+cd Role-Based-User-Authentication-JWT-Microservice
+```
+
+---
+
+### Step 2: Backend Configuration & Startup
+1. Navigate to the server folder:
+   ```bash
+   cd server
+   npm install
+   ```
+
+2. Create a `.env` file in the `server` directory (reference `.env.example`):
+   ```env
+   PORT=5000
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret_key_here
+   ```
+
+3. Start the backend development server:
+   ```bash
+   npm run dev
+   ```
+   *The backend will boot up on `http://localhost:5000` with connected MongoDB confirmation.*
+
+---
+
+### Step 3: Frontend Configuration & Startup
+1. Open a new terminal and navigate to the client folder:
+   ```bash
+   cd client
+   npm install
+   ```
+
+2. Start the Vite development server:
+   ```bash
+   npm run dev
+   ```
+   *The client interface will launch on `http://localhost:3000`.*
+
+---
+
+## 🧪 Testing the RBAC Workflows
+
+1. **Verify Standard User Isolation**:
+   - Log in using `user@gmail.com` / `123456`.
+   - Observe the **User Profile Dashboard** with Standard User privileges.
+   - Attempt to manually type `http://localhost:3000/admin` in the URL bar — the `ProtectedRoute` component will intercept the request and redirect back to `/login` or `/dashboard`.
+
+2. **Verify Administrative Control**:
+   - Log in using `admin@gmail.com` / `123456`.
+   - Access the **Admin Control Panel** (`/admin`).
+   - Test **"Make Admin"**: Click "Make Admin" on a user account to grant administrator rights.
+   - Test **"Block"**: Click "Block" to suspend an account, log out, and attempt logging in with that account — observe the `403 Forbidden` block.
+   - Test **"Unblock"**: Restore account access with a single click.
+
+---
+
+## 🛡️ Security Best Practices Implemented
+
+* **Strict Input Validation**: Required parameters are checked before querying the database.
+* **Cryptographic Salting**: Prevents rainbow table attacks using bcrypt with automatically generated salts.
+* **Token Expiration**: JSON Web Tokens are configured with a validity period to prevent perpetual access.
+* **CORS Protection**: Controlled origins enabled via Express `cors` middleware.
+* **Environment Variable Safety**: Secrets (`MONGO_URI`, `JWT_SECRET`) are strictly excluded from version control via `.gitignore`.
+* **SRV DNS Resilience**: Top-level Google DNS fallback (`8.8.8.8`, `8.8.4.4`) configured in Node.js to prevent Windows SRV lookup timeouts.
+
+---
+
+## 👩‍💻 Author & Internship Credits
+
+* **Developer:** Prerna Saini  
+* **GitHub Profile:** [@prernas8107](https://github.com/prernas8107)  
+* **Internship Program:** Arrowstack Full Stack Web Development Internship (2026 Batch)  
+* **Submission Module:** Mandatory Task 1 — Role-Based User Authentication & JWT Microservice  
+
+---
+
+<div align="center">
+  <sub>Built with ❤️ using the MERN Stack & Tailwind CSS. Designed for the Arrowstack Full Stack Internship.</sub>
+</div>
